@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE'
+        classpath 'com.sourcemuse.gradle.plugin:gradle-mongo-plugin:0.7.0'
+    }
+}
+apply plugin: 'java'
+apply plugin: 'mongo'
+apply plugin: 'spring-boot'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-data-mongodb"
+    testCompile "org.springframework.boot:spring-boot-starter-test"
+    compile "org.projectlombok:lombok:1.14.8"
+}
+
+test.dependsOn startMongoDb
+test.finalizedBy stopMongoDb
+
+mongo {
+    port 'RANDOM'
+}
+
+test {
+    systemProperties['spring.data.mongodb.uri'] = "mongodb://localhost:${project.mongo.port}/test"
+}
